@@ -1,25 +1,46 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { useRoute } from '@react-navigation/native';
 
 const CodeVerificationScreen = ({ navigation }) => {
   const [code, setCode] = useState('');
   const [error, setError] = useState('');
+  const route = useRoute();
+  const { phoneNumber } = route.params;
 
   const handleCodeInput = (text) => {
     setCode(text);
     setError(''); // Clear error when user starts typing
   };
 
-  const handleContinue = () => {
-    // Tu powinna się znaleźć logika weryfikacji kodu, np. sprawdzenie kodu w API
-    if (code === '123456') { // Załóżmy, że '123456' to prawidłowy kod
-      // Kod prawidłowy, przejście do następnego ekranu
-      // navigation.navigate('NextScreenName');
-    } else {
-      // Kod nieprawidłowy, wyświetlenie błędu
-      setError('Kod jest nieprawidłowy');
+  const handleContinue = async () => {
+    try {
+      const response = await fetch('http://192.168.0.42:3000/api/verifycode', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          phoneNumber: phoneNumber, // numer telefonu przekazany z poprzedniego ekranu
+          kodWeryfikacyjny: code,
+        }),
+      });
+      const data = await response.json();
+      
+      if (data.verified) {
+        // Kod jest prawidłowy, przejdź do następnego ekranu
+        //navigation.navigate('NextScreenName');
+      } else {
+        // Kod jest nieprawidłowy, wyświetl błąd
+        setError('Kod jest nieprawidłowy');
+      }
+    } catch (error) {
+      // W przypadku błędu komunikacji z serwerem, wyświetl odpowiedni komunikat
+      setError('Nie udało się połączyć z serwerem, spróbuj ponownie.');
+      console.error('Problem z połączeniem z API:', error);
     }
   };
+  
 
   return (
     <View style={styles.container}>

@@ -1,9 +1,12 @@
+const apiUrl = 'http://192.168.0.42:3000/api/sendcode';
+
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image} from 'react-native';
 
 const PhoneVerificationScreen = ({ navigation }) => {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [error, setError] = useState('');
+
 
   const handlePhoneInput = (text) => {
     const newText = text.replace(/[^0-9]/g, ''); // Usuwa wszystko oprócz cyfr
@@ -12,14 +15,35 @@ const PhoneVerificationScreen = ({ navigation }) => {
     }
   };
 
-  const handleContinue = () => {
+  const handleContinue = async () => {
     if (phoneNumber.length === 9) {
-        navigation.navigate('CodeVerification');
-        setError('');
+      try {
+        // Wyślij numer telefonu do serwera i oczekuj na kod weryfikacyjny
+        const response = await fetch(apiUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ numerTelefonu: phoneNumber }),
+        });
+        const data = await response.json();
+        if (data.kodWeryfikacyjny) {
+          // Przechowaj kod weryfikacyjny w stanie aplikacji, jeśli potrzebujesz
+          // Przejdź do ekranu weryfikacji kodu
+          navigation.navigate('CodeVerification', { phoneNumber: phoneNumber });
+        } else {
+          // Obsłuż sytuację, gdy kod nie został zwrócony
+          setError('Nie udało się uzyskać kodu weryfikacyjnego.');
+        }
+      } catch (error) {
+        console.error(error);
+        setError('Wystąpił błąd podczas łączenia z serwerem.');
+      }
     } else {
-        setError('Numer telefonu jest niepoprawny.');
+      setError('Numer telefonu jest niepoprawny.');
     }
   };
+  
 
   return (
     <View style={styles.container}>

@@ -1,27 +1,20 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
 
 const RegisterChoiceScreen = ({ navigation }) => {
-  const [phoneNumber, setPhoneNumber] = useState('');
-
-  const handlePhoneInput = (text) => {
-    setPhoneNumber(text);
-  };
 
   const handleContinueWithPhone = () => {
-    // Logika dla kontynuacji z numerem telefonu
-    // navigation.navigate('ScreenForPhoneNumber', { phoneNumber });
+    navigation.navigate('PhoneVerification');
   };
 
   const handleContinueWithEmail = () => {
-    // Logika dla kontynuacji z e-mailem
-    // navigation.navigate('ScreenForEmail');
+    navigation.navigate('EmailVerification');
   };
 
   return (
     <View style={styles.container}>
         <Image source={require('./../assets/AlfaDoCelu.png')} style={styles.logo}/>
-      <TouchableOpacity style={styles.button} onPress={handleContinueWithEmail}>
+      <TouchableOpacity style={styles.button} onPress={handleContinueWithPhone}>
         <Text style={styles.buttonText}>Zarejestruj za pomocą numeru telefonu</Text>
       </TouchableOpacity>
       <Text>Lub</Text>

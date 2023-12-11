@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import { useRoute } from '@react-navigation/native';
+import API_BASE_URL from '../config';
 
 const CodeVerificationScreen = ({ navigation }) => {
   const [code, setCode] = useState('');
   const [error, setError] = useState('');
   const route = useRoute();
   const { phoneNumber } = route.params;
+  const { email } = route.params;
 
   const handleCodeInput = (text) => {
     setCode(text);
@@ -15,13 +17,14 @@ const CodeVerificationScreen = ({ navigation }) => {
 
   const handleContinue = async () => {
     try {
-      const response = await fetch('http://192.168.0.42:3000/api/verifycode', {
+      const response = await fetch(`${API_BASE_URL}/api/verifycode`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           phoneNumber: phoneNumber, // numer telefonu przekazany z poprzedniego ekranu
+          email: email,
           kodWeryfikacyjny: code,
         }),
       });
@@ -29,7 +32,10 @@ const CodeVerificationScreen = ({ navigation }) => {
       
       if (data.verified) {
         // Kod jest prawidłowy, przejdź do następnego ekranu
-        //navigation.navigate('NextScreenName');
+        navigation.navigate('Registration', {
+          phoneNumber: phoneNumber, // te same dane, które otrzymałeś
+          email: email, // te same dane, które otrzymałeś
+        });
       } else {
         // Kod jest nieprawidłowy, wyświetl błąd
         setError('Kod jest nieprawidłowy');

@@ -1,12 +1,11 @@
-const apiUrl = 'http://192.168.0.42:3000/api/sendcode';
-
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image} from 'react-native';
+import API_BASE_URL from '../config';
 
 const PhoneVerificationScreen = ({ navigation }) => {
+  const apiUrl = `${API_BASE_URL}/api/sendcode`;
   const [phoneNumber, setPhoneNumber] = useState('');
   const [error, setError] = useState('');
-
 
   const handlePhoneInput = (text) => {
     const newText = text.replace(/[^0-9]/g, ''); // Usuwa wszystko oprócz cyfr
@@ -18,7 +17,7 @@ const PhoneVerificationScreen = ({ navigation }) => {
   const handleContinue = async () => {
     if (phoneNumber.length === 9) {
       try {
-        // Wyślij numer telefonu do serwera i oczekuj na kod weryfikacyjny
+        // Wyślij numer telefonu do serwera i oczekuj na kod weryfikacyjny 
         const response = await fetch(apiUrl, {
           method: 'POST',
           headers: {

@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import API_BASE_URL from '../config';
 
 const EmailVerificationScreen = ({ navigation }) => {
+  const apiUrl = `${API_BASE_URL}/api/sendcode`;
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
 
@@ -14,12 +16,32 @@ const EmailVerificationScreen = ({ navigation }) => {
     return /\S+@\S+\.\S+/.test(email);
   };
 
-  const handleContinue = () => {
+  const handleContinue = async () => {
     if (isEmailValid(email)) {
-      navigation.navigate('CodeVerification');
-      setError('');
+      try {
+        // Wyślij numer telefonu do serwera i oczekuj na kod weryfikacyjny
+        const response = await fetch(apiUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ email: email }),
+        });
+        const data = await response.json();
+        if (data.kodWeryfikacyjny) {
+          // Przejdź do ekranu weryfikacji kodu
+          navigation.navigate('CodeVerification', { email: email });
+        } else {
+          // Obsłuż sytuację, gdy kod nie został zwrócony
+          setError('Nie udało się uzyskać kodu weryfikacyjnego.');
+        }
+      } catch (error) {
+        console.error(error);
+        setError('Wystąpił błąd podczas łączenia z serwerem.');
+        setError(global.API_BASE_URL); //Test taki dla ponownego łącznie przez expo bo coś nie działa i edytowac i zapisac plik
+      }
     } else {
-      setError('Adres email jest niepoprawny.');
+      setError('Email jest niepoprawny.');
     }
   };
 

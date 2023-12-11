@@ -7,6 +7,8 @@ import RegisterChoiceScreen from '../components/RegisterChoiceScreen';
 import PhoneVerificationScreen from '../components/PhoneVerificationScreen';
 import EmailVerificationScreen from '../components/EmailVerificationScreen';
 import CodeVerificationScreen from '../components/CodeVerificationScreen';
+import RegistrationScreen from '../components/RegistrationScreen';
+import LoginScreen from '../components/LoginScreen';
 // Importuj inne ekrany, które potrzebujesz
 
 const Stack = createStackNavigator();
@@ -21,6 +23,9 @@ export default function AppNavigation () {
         <Stack.Screen name="PhoneVerification" component={PhoneVerificationScreen}  options={{ headerShown: false }}/>
         <Stack.Screen name="EmailVerification" component={EmailVerificationScreen}  options={{ headerShown: false }}/>
         <Stack.Screen name="CodeVerification" component={CodeVerificationScreen}  options={{ headerShown: false }}/>
+        <Stack.Screen name="Registration" component={RegistrationScreen}  options={{ headerShown: false }}/>
+        <Stack.Screen name="Login" component={LoginScreen}  options={{ headerShown: false }}/>
+        
       </Stack.Navigator>
     </NavigationContainer>
   );

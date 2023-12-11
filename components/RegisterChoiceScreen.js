@@ -17,7 +17,7 @@ const RegisterChoiceScreen = ({ navigation }) => {
       <TouchableOpacity style={styles.button} onPress={handleContinueWithPhone}>
         <Text style={styles.buttonText}>Zarejestruj za pomocą numeru telefonu</Text>
       </TouchableOpacity>
-      <Text>Lub</Text>
+      <Text style={styles.orText}>lub</Text>
       <TouchableOpacity style={styles.button} onPress={handleContinueWithEmail}>
         <Text style={styles.buttonText}>Zarejestruj się za pomocą email</Text>
       </TouchableOpacity>
@@ -44,10 +44,17 @@ const styles = StyleSheet.create({
   buttonText: {
     fontSize: 18,
     color: '#fff',
+    fontWeight: 'bold',
   },
   logo:{
     width: 120,
     height: 120,
+  },
+  orText: {
+    fontSize: 16,
+    color: '#000',
+    marginTop: 10,
+    marginBottom: 10,
   },
 });
 

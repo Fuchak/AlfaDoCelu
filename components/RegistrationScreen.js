@@ -67,7 +67,6 @@ const RegistrationScreen = ({ navigation }) => {
       if (data.success) {
         // Rejestracja udana, przenieś do kolejnego ekranu
         navigation.navigate('Login'); 
-        setError('Giga G mamy to.');
       } else {
         // Rejestracja nieudana, wyświetl błąd
         setError(data.message || 'Nie udało się zarejestrować.');

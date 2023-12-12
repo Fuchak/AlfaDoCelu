@@ -1,12 +1,35 @@
 import React, { useEffect, useRef } from 'react';
 import { View, StyleSheet, Animated, Dimensions } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import API_BASE_URL from '../config';
 
 const imageSize = 267;
 
 export default function LoadingAppScreen() {
   const navigation = useNavigation();
   const logoPosition = useRef(new Animated.Value(-imageSize)).current;
+  const apiUrl = `${API_BASE_URL}/api/verifytoken`;
+
+  const checkToken = async () => {
+    try {
+      const token = await AsyncStorage.getItem('userToken');
+    const response = await fetch(apiUrl, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      },
+    });
+
+    if (response.ok) {
+      //navigation.navigate('HomeScreen'); // Zastąp 'HomeScreen' rzeczywistą nazwą docelowego ekranu
+    } else {
+      navigation.navigate('Login');
+    }
+  } catch (error) {
+    navigation.navigate('Login');
+  }
+};
 
   useEffect(() => {
     Animated.spring(logoPosition, {
@@ -17,7 +40,7 @@ export default function LoadingAppScreen() {
     }).start();
 
     const timeout = setTimeout(() => {
-      navigation.navigate('RegisterChoice');
+      checkToken(); // Zamiast bezpośredniego przekierowania, sprawdź token
     }, 1000); // 2 sekundy opóźnienia
 
     return () => {

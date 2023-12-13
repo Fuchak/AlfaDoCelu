@@ -36,7 +36,7 @@ const LoginScreen = ({ navigation }) => {
 
       if (response.ok) {
         await AsyncStorage.setItem('userToken', data.token);
-        //navigation.navigate('HomeScreen'); // Zastąp 'HomeScreen' rzeczywistą nazwą docelowego ekranu
+        navigation.navigate('DrawerNavigationScreen');
         setError('Udało się zalogować.');
       } else {
         // Obsługa błędów, np. niepoprawne dane logowania

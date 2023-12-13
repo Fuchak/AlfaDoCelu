@@ -19,10 +19,7 @@ W folderze "serwer" zainstaluj zależności node.js używając poniższych komen
 ### Aplikacja
 W folderze "aplikacji" zainstaluj zależności node/expo używając poniższych komend:
 - npm install -g expo-cli
-- npm install react react-native
-- npm install @react-navigation/native
-- npm install react-native-reanimated react-native-gesture-handler react-native-screens react-native-safe-area-context @react-native-community/masked-view
-- npm install @react-native-async-storage/async-storage
+- npx expo install --fix
 
 ### XAMPP:
 1. Startujemy Apache i MySQL.

@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, Platform, StatusBar } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image, StatusBar } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 
 const UserProfileScreen = ({ navigation }) => {
   return (
@@ -7,13 +8,13 @@ const UserProfileScreen = ({ navigation }) => {
         <View style={styles.header}>
           <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
             {
-              <Text style={styles.backButtonText}>{"<"}</Text> //Możesz tutaj użyć ikony z biblioteki, np. Ionicons */
+              <Ionicons name="arrow-back" size={24} color="white" />
             }
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Profil</Text>
           <TouchableOpacity onPress={() => {}} style={styles.settingsButton}>
             {
-            <Text style={styles.settingsButtonText}>⚙️</Text> //Możesz tutaj użyć ikony z biblioteki, np. Ionicons 
+            <Ionicons name="settings" size={24} color="white" />
             }
           </TouchableOpacity>
         </View>
@@ -41,7 +42,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: 'white', // Tło całego ekranu
-    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
+    paddingTop: StatusBar.currentHeight,
   },
   header: {
     flexDirection: 'row',

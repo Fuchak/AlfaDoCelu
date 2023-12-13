@@ -22,7 +22,7 @@ export default function LoadingAppScreen() {
     });
 
     if (response.ok) {
-      //navigation.navigate('HomeScreen'); // Zastąp 'HomeScreen' rzeczywistą nazwą docelowego ekranu
+      navigation.navigate('DrawerNavigationScreen');
     } else {
       navigation.navigate('Login');
     }

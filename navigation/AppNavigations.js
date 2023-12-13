@@ -9,6 +9,7 @@ import EmailVerificationScreen from '../components/EmailVerificationScreen';
 import CodeVerificationScreen from '../components/CodeVerificationScreen';
 import RegistrationScreen from '../components/RegistrationScreen';
 import LoginScreen from '../components/LoginScreen';
+import DrawerNavigations from './DrawerNavigations';
 // Importuj inne ekrany, które potrzebujesz
 
 const Stack = createStackNavigator();
@@ -25,7 +26,7 @@ export default function AppNavigation () {
         <Stack.Screen name="CodeVerification" component={CodeVerificationScreen}  options={{ headerShown: false }}/>
         <Stack.Screen name="Registration" component={RegistrationScreen}  options={{ headerShown: false }}/>
         <Stack.Screen name="Login" component={LoginScreen}  options={{ headerShown: false }}/>
-        
+        <Stack.Screen name="DrawerNavigationScreen" component={DrawerNavigations} options={{ headerShown: false }} />
       </Stack.Navigator>
     </NavigationContainer>
   );

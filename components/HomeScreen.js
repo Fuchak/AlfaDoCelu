@@ -21,30 +21,24 @@ const HomeScreen = ({ navigation }) => {
     (async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
-        setErrorMsg('Permission to access location was denied');
+        setRegion(defaultRegion);
         setIsLoading(false);
         return;
       }
-
       try {
-        let location = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Low });
-        if (location) {
-          setRegion({
-            latitude: location.coords.latitude,
-            longitude: location.coords.longitude,
-            latitudeDelta: 0.005,
-            longitudeDelta: 0.005,
-          });
-        }
+        let location = await Location.getCurrentPositionAsync({});
+        setRegion({
+          latitude: location.coords.latitude,
+          longitude: location.coords.longitude,
+          latitudeDelta: 0.005,
+          longitudeDelta: 0.005,
+        });
       } catch (error) {
-        console.error(error);
-        setErrorMsg('Could not fetch location');
+        setRegion(defaultRegion);
       }
       setIsLoading(false);
     })();
-
-    return () => unsubscribeFocus();
-  }, [navigation]);
+  }, []);
 
   const goToCurrentLocation = () => {
     (async () => {

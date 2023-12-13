@@ -21,7 +21,7 @@ const LoginScreen = ({ navigation }) => {
   };
 
   const handleLogin = async () => {
-    const loginUrl = `${API_BASE_URL}/api/login`; // Zastąp to właściwym URL do Twojego API
+    const loginUrl = `${API_BASE_URL}/api/login`;
 
     try {
       const response = await fetch(loginUrl, {
@@ -37,7 +37,6 @@ const LoginScreen = ({ navigation }) => {
       if (response.ok) {
         await AsyncStorage.setItem('userToken', data.token);
         navigation.navigate('DrawerNavigationScreen');
-        setError('Udało się zalogować.');
       } else {
         // Obsługa błędów, np. niepoprawne dane logowania
         setError(data.message || 'Nie udało się zalogować.');

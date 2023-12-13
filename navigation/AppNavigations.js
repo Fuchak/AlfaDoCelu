@@ -1,6 +1,7 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+import DrawerNavigations from './DrawerNavigations';
 import UserProfileScreen from '../components/UserProfileScreen';
 import LoadingAppScreen from '../components/LoadingAppScreen';
 import RegisterChoiceScreen from '../components/RegisterChoiceScreen';
@@ -9,7 +10,7 @@ import EmailVerificationScreen from '../components/EmailVerificationScreen';
 import CodeVerificationScreen from '../components/CodeVerificationScreen';
 import RegistrationScreen from '../components/RegistrationScreen';
 import LoginScreen from '../components/LoginScreen';
-import DrawerNavigations from './DrawerNavigations';
+import SettingsScreen from '../components/SettingsScreen';
 // Importuj inne ekrany, które potrzebujesz
 
 const Stack = createStackNavigator();
@@ -27,6 +28,7 @@ export default function AppNavigation () {
         <Stack.Screen name="Registration" component={RegistrationScreen}  options={{ headerShown: false }}/>
         <Stack.Screen name="Login" component={LoginScreen}  options={{ headerShown: false }}/>
         <Stack.Screen name="DrawerNavigationScreen" component={DrawerNavigations} options={{ headerShown: false }} />
+        <Stack.Screen name="Settings" component={SettingsScreen} options={{ headerShown: false }} />
       </Stack.Navigator>
     </NavigationContainer>
   );

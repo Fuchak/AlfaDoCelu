@@ -27,13 +27,11 @@ const RegistrationScreen = ({ navigation }) => {
   };
 
   const handleRegistration = async () => {
-    // Walidacja pól formularza
     if (!name || !password || !confirmPassword) {
       setError('Proszę upewnić się, że wszystkie pola są wypełnione.');
       return;
     }
   
-    // Walidacja hasła
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
     if (!passwordRegex.test(password)) {
       setError('Hasło musi zawierać przynajmniej 8 znaków, w tym jedną dużą literę, jeden znak specjalny i jedną cyfrę.');
@@ -46,7 +44,6 @@ const RegistrationScreen = ({ navigation }) => {
       return;
     }
   
-    // Logika wysyłania danych do serwera
     try {
       const response = await fetch(apiUrl, {
         method: 'POST',
@@ -55,25 +52,21 @@ const RegistrationScreen = ({ navigation }) => {
         },
         body: JSON.stringify({
           imie: name,
-          numerTelefonu: phoneNumber || '', // Jeśli nie ma numeru telefonu, ustaw pusty string
-          email: email || '', // Jeśli nie ma e-maila, ustaw pusty string
+          numerTelefonu: phoneNumber || null,
+          email: email || null,
           haslo: password,
-          // Pozostałe pola, które są wymagane przez Twoją bazę danych
         }),
       });
   
       const data = await response.json();
   
       if (data.success) {
-        // Rejestracja udana, przenieś do kolejnego ekranu
         navigation.navigate('Login'); 
       } else {
-        // Rejestracja nieudana, wyświetl błąd
         setError(data.message || 'Nie udało się zarejestrować.');
       }
     } catch (error) {
       setError('Problem z połączeniem z serwerem.');
-      console.error('Problem z połączeniem z API:', error);
     }
   };
   

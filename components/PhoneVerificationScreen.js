@@ -17,7 +17,6 @@ const PhoneVerificationScreen = ({ navigation }) => {
   const handleContinue = async () => {
     if (phoneNumber.length === 9) {
       try {
-        // Wyślij numer telefonu do serwera i oczekuj na kod weryfikacyjny 
         const response = await fetch(apiUrl, {
           method: 'POST',
           headers: {
@@ -27,11 +26,8 @@ const PhoneVerificationScreen = ({ navigation }) => {
         });
         const data = await response.json();
         if (data.kodWeryfikacyjny) {
-          // Przechowaj kod weryfikacyjny w stanie aplikacji, jeśli potrzebujesz
-          // Przejdź do ekranu weryfikacji kodu
           navigation.navigate('CodeVerification', { phoneNumber: phoneNumber });
         } else {
-          // Obsłuż sytuację, gdy kod nie został zwrócony
           setError('Nie udało się uzyskać kodu weryfikacyjnego.');
         }
       } catch (error) {

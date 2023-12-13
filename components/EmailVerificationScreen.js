@@ -12,14 +12,12 @@ const EmailVerificationScreen = ({ navigation }) => {
   };
 
   const isEmailValid = (email) => {
-    // Prosta walidacja adresu email
     return /\S+@\S+\.\S+/.test(email);
   };
 
   const handleContinue = async () => {
     if (isEmailValid(email)) {
       try {
-        // Wyślij numer telefonu do serwera i oczekuj na kod weryfikacyjny
         const response = await fetch(apiUrl, {
           method: 'POST',
           headers: {
@@ -29,16 +27,13 @@ const EmailVerificationScreen = ({ navigation }) => {
         });
         const data = await response.json();
         if (data.kodWeryfikacyjny) {
-          // Przejdź do ekranu weryfikacji kodu
           navigation.navigate('CodeVerification', { email: email });
         } else {
-          // Obsłuż sytuację, gdy kod nie został zwrócony
           setError('Nie udało się uzyskać kodu weryfikacyjnego.');
         }
       } catch (error) {
         console.error(error);
         setError('Wystąpił błąd podczas łączenia z serwerem.');
-        setError(global.API_BASE_URL); //Test taki dla ponownego łącznie przez expo bo coś nie działa i edytowac i zapisac plik
       }
     } else {
       setError('Email jest niepoprawny.');

@@ -3,40 +3,45 @@ import { View, Text, StyleSheet, TouchableOpacity, Image, StatusBar } from 'reac
 import { Ionicons } from '@expo/vector-icons';
 import API_BASE_URL from '../config';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useFocusEffect } from '@react-navigation/native';
 
 const UserProfileScreen = ({ navigation }) => {
+
   const [userData, setUserData] = useState({
     imie: '',
     email: '',
     numerTelefonu: '',
   });
 
-  useEffect(() => {
-    const getUserData = async () => {
-      try {
-        const token = await AsyncStorage.getItem('userToken');
-        const response = await fetch(`${API_BASE_URL}/api/user-profile`, {
-          method: 'GET',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-          },
-        });
 
-        if (!response.ok) throw new Error('Response not ok');
+  useFocusEffect(
+    React.useCallback(() => {
+      const getUserData = async () => {
+        try {
+          const token = await AsyncStorage.getItem('userToken');
+          const response = await fetch(`${API_BASE_URL}/api/user-profile`, {
+            method: 'GET',
+            headers: {
+              'Authorization': `Bearer ${token}`,
+            },
+          });
 
-        const data = await response.json();
-        setUserData({
-          imie: data.imie,
-          email: data.email,
-          numerTelefonu: data.numerTelefonu,
-        });
-      } catch (error) {
-        console.error('Błąd:', error);
-      }
-    };
+          if (!response.ok) throw new Error('Response not ok');
 
-    getUserData();
-  }, []);
+          const data = await response.json();
+          setUserData({
+            imie: data.imie,
+            email: data.email,
+            numerTelefonu: data.numerTelefonu,
+          });
+        } catch (error) {
+          console.error('Błąd:', error);
+        }
+      };
+
+      getUserData();
+    }, [])
+  );
 
 
   const handleLogout = async () => {
@@ -51,13 +56,13 @@ const UserProfileScreen = ({ navigation }) => {
   return (
       <View style={styles.container}>
         <View style={styles.header}>
-          <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
             {
               <Ionicons name="arrow-back" size={24} color="white" />
             }
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Profil</Text>
-          <TouchableOpacity onPress={() => {navigation.navigate('Settings')}} style={styles.settingsButton}>
+          <TouchableOpacity onPress={() => {navigation.navigate('Settings')}}>
             {
             <Ionicons name="settings" size={24} color="white" />
             }
@@ -65,7 +70,7 @@ const UserProfileScreen = ({ navigation }) => {
         </View>
         <View style={styles.avatarContainer}>
           <Image 
-            source={require('./../assets/avatar.png')} //Awatar użytkownika tutaj 
+            source={require('./../assets/avatar.png')} 
             style={styles.avatar}
           />
           {
@@ -84,7 +89,7 @@ const UserProfileScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'white', // Tło całego ekranu
+    backgroundColor: 'white',
     paddingTop: StatusBar.currentHeight,
   },
   header: {
@@ -92,24 +97,18 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: 16,
-    backgroundColor: '#292929', // Tło nagłówka
-  },
-  backButton: {
-    // Styl dla przycisku powrotu
+    backgroundColor: '#292929', 
   },
   backButtonText: {
-    color: 'white', // Kolor tekstu przycisku powrotu
+    color: 'white',
     fontSize: 16,
   },
   headerTitle: {
-    color: 'white', // Kolor tytułu nagłówka
+    color: 'white',
     fontSize: 20,
   },
-  settingsButton: {
-    // Styl dla przycisku ustawień
-  },
   settingsButtonText: {
-    color: 'white', // Kolor tekstu przycisku ustawień
+    color: 'white',
     fontSize: 16,
   },
   avatarContainer: {
@@ -133,7 +132,7 @@ const styles = StyleSheet.create({
     color: 'grey',
   },
   logoutButton: {
-    backgroundColor: '#f3a31a', // Przycisk wylogowania
+    backgroundColor: '#f3a31a',
     padding: 16,
     alignItems: 'center',
   },

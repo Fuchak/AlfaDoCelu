@@ -40,11 +40,11 @@ export default function LoadingAppScreen() {
     }).start();
 
     const timeout = setTimeout(() => {
-      checkToken(); // Zamiast bezpośredniego przekierowania, sprawdź token
-    }, 1000); // 2 sekundy opóźnienia
+      checkToken();
+    }, 1000); 
 
     return () => {
-      clearTimeout(timeout); // Wyczyść timeout przy odmontowywaniu
+      clearTimeout(timeout);
     };
   }, [navigation]);
 
@@ -64,7 +64,7 @@ export default function LoadingAppScreen() {
       flex: 1,
       justifyContent: 'center',
       alignItems: 'center',
-      backgroundColor: '#00101d', // Czarne tło
+      backgroundColor: '#00101d',
     },
     logo: {
       width: 267,

@@ -38,7 +38,6 @@ const LoginScreen = ({ navigation }) => {
         await AsyncStorage.setItem('userToken', data.token);
         navigation.navigate('DrawerNavigationScreen');
       } else {
-        // Obsługa błędów, np. niepoprawne dane logowania
         setError(data.message || 'Nie udało się zalogować.');
       }
     } catch (error) {

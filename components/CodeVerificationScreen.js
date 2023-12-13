@@ -12,7 +12,7 @@ const CodeVerificationScreen = ({ navigation }) => {
 
   const handleCodeInput = (text) => {
     setCode(text);
-    setError(''); // Clear error when user starts typing
+    setError('');
   };
 
   const handleContinue = async () => {
@@ -23,7 +23,7 @@ const CodeVerificationScreen = ({ navigation }) => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          phoneNumber: phoneNumber, // numer telefonu przekazany z poprzedniego ekranu
+          phoneNumber: phoneNumber,
           email: email,
           kodWeryfikacyjny: code,
         }),
@@ -31,17 +31,14 @@ const CodeVerificationScreen = ({ navigation }) => {
       const data = await response.json();
       
       if (data.verified) {
-        // Kod jest prawidłowy, przejdź do następnego ekranu
         navigation.navigate('Registration', {
-          phoneNumber: phoneNumber, // te same dane, które otrzymałeś
-          email: email, // te same dane, które otrzymałeś
+          phoneNumber: phoneNumber,
+          email: email, 
         });
       } else {
-        // Kod jest nieprawidłowy, wyświetl błąd
         setError('Kod jest nieprawidłowy');
       }
     } catch (error) {
-      // W przypadku błędu komunikacji z serwerem, wyświetl odpowiedni komunikat
       setError('Nie udało się połączyć z serwerem, spróbuj ponownie.');
       console.error('Problem z połączeniem z API:', error);
     }
@@ -103,16 +100,16 @@ const styles = StyleSheet.create({
   button: {
     height: 50,
     width: '80%',
-    backgroundColor: '#ff9500', // Kolor przycisku
+    backgroundColor: '#ff9500',
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 10,
     padding: 10,
-    marginTop: 10, // Odstęp od inputu
+    marginTop: 10, 
   },
   buttonText: {
     fontSize: 20,
-    color: '#fff', // Kolor tekstu
+    color: '#fff',
     fontWeight: 'bold',
   },
   logo:{

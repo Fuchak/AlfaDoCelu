@@ -11,25 +11,28 @@ import CodeVerificationScreen from '../components/CodeVerificationScreen';
 import RegistrationScreen from '../components/RegistrationScreen';
 import LoginScreen from '../components/LoginScreen';
 import SettingsScreen from '../components/SettingsScreen';
+import RideHistoryScreen from '../components/RideHistoryScreen';
+
 // Importuj inne ekrany, które potrzebujesz
 
 const Stack = createStackNavigator();
 
-export default function AppNavigation () {
-  return (
-    <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen name="LoadingApp" component={LoadingAppScreen}  options={{ headerShown: false }}/>
-        <Stack.Screen name="RegisterChoice" component={RegisterChoiceScreen}  options={{ headerShown: false }}/>
-        <Stack.Screen name="UserProfile" component={UserProfileScreen}  options={{ headerShown: false }}/>
-        <Stack.Screen name="PhoneVerification" component={PhoneVerificationScreen}  options={{ headerShown: false }}/>
-        <Stack.Screen name="EmailVerification" component={EmailVerificationScreen}  options={{ headerShown: false }}/>
-        <Stack.Screen name="CodeVerification" component={CodeVerificationScreen}  options={{ headerShown: false }}/>
-        <Stack.Screen name="Registration" component={RegistrationScreen}  options={{ headerShown: false }}/>
-        <Stack.Screen name="Login" component={LoginScreen}  options={{ headerShown: false }}/>
-        <Stack.Screen name="DrawerNavigationScreen" component={DrawerNavigations} options={{ headerShown: false }} />
-        <Stack.Screen name="Settings" component={SettingsScreen} options={{ headerShown: false }} />
-      </Stack.Navigator>
-    </NavigationContainer>
-  );
+export default function AppNavigation() {
+    return (
+        <NavigationContainer>
+            <Stack.Navigator>
+                <Stack.Screen name="LoadingApp" component={LoadingAppScreen} options={{ headerShown: false }} />
+                <Stack.Screen name="RegisterChoice" component={RegisterChoiceScreen} options={{ headerShown: false }} />
+                <Stack.Screen name="UserProfile" component={UserProfileScreen} options={{ headerShown: false }} />
+                <Stack.Screen name="PhoneVerification" component={PhoneVerificationScreen} options={{ headerShown: false }} />
+                <Stack.Screen name="EmailVerification" component={EmailVerificationScreen} options={{ headerShown: false }} />
+                <Stack.Screen name="CodeVerification" component={CodeVerificationScreen} options={{ headerShown: false }} />
+                <Stack.Screen name="Registration" component={RegistrationScreen} options={{ headerShown: false }} />
+                <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
+                <Stack.Screen name="DrawerNavigationScreen" component={DrawerNavigations} options={{ headerShown: false }} />
+                <Stack.Screen name="Settings" component={SettingsScreen} options={{ headerShown: false }} />
+                <Stack.Screen name="RideHistory" component={RideHistoryScreen} options={{ headerShown: false }} />
+            </Stack.Navigator>
+        </NavigationContainer>
+    );
 };

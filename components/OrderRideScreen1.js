@@ -56,7 +56,8 @@ const OrderRideScreen1 = ({ navigation }) => {
             <Text style={styles.modalText}>Wybierz formę płatności:</Text>
             <TouchableOpacity
               style={styles.orangeButton}
-              onPress={() => handlePaymentSelection('Portfel')}
+              //onPress={() => handlePaymentSelection('Portfel')}
+              onPress={() => navigation.navigate('SelectDriver')}
             >
               <Text style={styles.orangeButtonText}>Portfel</Text>
             </TouchableOpacity>

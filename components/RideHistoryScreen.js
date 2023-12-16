@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, FlatList, SafeAreaView, StatusBar } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
 
 const RideHistoryScreen = ({ navigation }) => {
   // przykladowe dane na sztywno zeby bylo widac wyglad
@@ -56,10 +55,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 16,
     backgroundColor: '#292929',
-  },
-  backButtonText: {
-    color: 'white',
-    fontSize: 16,
   },
   headerTitle: {
     flex: 1,

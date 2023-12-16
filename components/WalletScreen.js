@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, StyleSheet, Text, TouchableOpacity, ScrollView } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 
 const paymentsHistory = [
   { id: 1, date: '2023-10-01', amount: '150,00 BLIK', description: 'Wpłata od Jan Kowalski' },
@@ -12,8 +13,8 @@ const WalletScreen = () => {
     <View style={styles.container}>
       {/* Header z przyciskiem powrotu i tytułem */}
       <View style={styles.header}>
-        <TouchableOpacity style={styles.backButton} onPress={() => {}}>
-          <Text style={styles.backButtonText}>{"<"}</Text>
+      <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Ionicons name="arrow-back" size={24} color="white" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Portfel</Text>
       </View>
@@ -71,6 +72,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 20,
     fontWeight: 'bold',
+    color: 'white'
   },
   balanceSection: {
     padding: 20,
@@ -128,7 +130,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
     marginTop: 20,
     padding: 15,
-    backgroundColor: 'orange', // Przykładowy niebieski kolor
+    backgroundColor: 'orange', // pomarańczowy
     borderRadius: 5,
     alignItems: 'center',
   },

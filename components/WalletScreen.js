@@ -74,9 +74,10 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
   headerTitle: {
+    flex: 1,
     fontSize: 20,
-    fontWeight: 'bold',
-    color: 'white'
+    color: 'white',
+    textAlign: 'center',
   },
   balanceSection: {
     padding: 20,

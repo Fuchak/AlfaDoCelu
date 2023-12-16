@@ -18,7 +18,7 @@ import NotificationsScreen from '../components/NotificationsScreen';
 import SupportScreen from '../components/SupportScreen';
 import OrderRideScreen from '../components/OrderRideScreen';
 import OrderRideScreen1 from '../components/OrderRideScreen1';
-
+import RateScreen from '../components/RateScreen';
 // Importuj inne ekrany, które potrzebujesz
 
 const Stack = createStackNavigator();
@@ -44,6 +44,7 @@ export default function AppNavigation() {
                 <Stack.Screen name="Help" component={SupportScreen} options={{headerShown: false}}/>
                 <Stack.Screen name="OrderRide" component={OrderRideScreen} options={{ headerShown: false }} />
                 <Stack.Screen name="OrderRide1" component={OrderRideScreen1} options={{ headerShown: false }} />
+                <Stack.Screen name="Rate" component={RateScreen} options={{headerShown: false}}/>
             </Stack.Navigator>
         </NavigationContainer>
     );

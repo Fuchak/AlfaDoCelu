@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, Text, TouchableOpacity, ScrollView } from 'react-native';
+import { View, StyleSheet, Text, TouchableOpacity, ScrollView, SafeAreaView, StatusBar } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 const paymentsHistory = [
@@ -8,13 +8,16 @@ const paymentsHistory = [
   { id: 3, date: '2023-09-15', amount: '200,00 BLIK', description: 'Wpłata własna' },
 ];
 
-const WalletScreen = () => {
+
+const WalletScreen = ({navigation}) => {
   return (
     <View style={styles.container}>
       {/* Header z przyciskiem powrotu i tytułem */}
       <View style={styles.header}>
       <TouchableOpacity onPress={() => navigation.goBack()}>
+        {
           <Ionicons name="arrow-back" size={24} color="white" />
+        }
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Portfel</Text>
       </View>
@@ -26,7 +29,7 @@ const WalletScreen = () => {
       </View>
 
       {/* Przycisk doładowania konta */}
-      <TouchableOpacity style={styles.reloadButton} onPress={() => {}}>
+      <TouchableOpacity style={styles.reloadButton} onPress={() => navigation.navigate('ReloadBlik')}>
         <Text style={styles.reloadButtonText}>DOŁADUJ KONTO</Text>
       </TouchableOpacity>
       
@@ -56,12 +59,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#FFFFFF', // biały
+    paddingTop: StatusBar.currentHeight,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     padding: 20,
-    backgroundColor: 'orange', // kolor pomarańczowy dla nagłówka
+    backgroundColor: '#292929', // kolor czarny dla nagłówka
   },
   backButton: {
     marginRight: 10,

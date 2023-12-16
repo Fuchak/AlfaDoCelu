@@ -16,6 +16,8 @@ import WalletScreen from '../components/WalletScreen';
 import ReloadBlikScreen from '../components/ReloadBlikScreen';
 import NotificationsScreen from '../components/NotificationsScreen';
 import SupportScreen from '../components/SupportScreen';
+import OrderRideScreen from '../components/OrderRideScreen';
+import OrderRideScreen1 from '../components/OrderRideScreen1';
 
 // Importuj inne ekrany, które potrzebujesz
 
@@ -40,6 +42,8 @@ export default function AppNavigation() {
                 <Stack.Screen name="ReloadBlik" component={ReloadBlikScreen} options={{headerShown: false}}/>
                 <Stack.Screen name="Notifications" component={NotificationsScreen} options={{ headerShown: false }} />
                 <Stack.Screen name="Help" component={SupportScreen} options={{headerShown: false}}/>
+                <Stack.Screen name="OrderRide" component={OrderRideScreen} options={{ headerShown: false }} />
+                <Stack.Screen name="OrderRide1" component={OrderRideScreen1} options={{ headerShown: false }} />
             </Stack.Navigator>
         </NavigationContainer>
     );

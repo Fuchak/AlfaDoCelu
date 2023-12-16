@@ -12,6 +12,7 @@ import RegistrationScreen from '../components/RegistrationScreen';
 import LoginScreen from '../components/LoginScreen';
 import SettingsScreen from '../components/SettingsScreen';
 import RideHistoryScreen from '../components/RideHistoryScreen';
+import WalletScreen from '../components/WalletScreen';
 
 // Importuj inne ekrany, które potrzebujesz
 
@@ -32,6 +33,7 @@ export default function AppNavigation() {
                 <Stack.Screen name="DrawerNavigationScreen" component={DrawerNavigations} options={{ headerShown: false }} />
                 <Stack.Screen name="Settings" component={SettingsScreen} options={{ headerShown: false }} />
                 <Stack.Screen name="RideHistory" component={RideHistoryScreen} options={{ headerShown: false }} />
+                <Stack.Screen name="Wallet" component={WalletScreen} options={{headerShown: false}}/>
             </Stack.Navigator>
         </NavigationContainer>
     );

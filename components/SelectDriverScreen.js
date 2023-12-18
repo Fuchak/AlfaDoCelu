@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, SafeAreaView, StatusBar } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, StatusBar } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 const driversData = [
@@ -32,6 +32,15 @@ const SelectDriverScreen = ({ navigation }) => {
     // Tutaj dodaj logikę dla wyboru kierowcy
   };
 
+  const onConfirmRide = () => {
+    if (selectedDriver) {
+      // Wywołanie funkcji przekazanej z HomeScreen
+      navigation.navigate('Home', { rideOrdered: true });
+    } else {
+      alert('Proszę wybrać kierowcę');
+    }
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -53,7 +62,7 @@ const SelectDriverScreen = ({ navigation }) => {
         )}
       />
 
-      <TouchableOpacity style={styles.button} onPress={() => {}}>
+      <TouchableOpacity style={styles.button} onPress={onConfirmRide}>
         <Text style={styles.buttonText}>W drogę!</Text>
       </TouchableOpacity>
     </View>

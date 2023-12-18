@@ -1,48 +1,64 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Modal, Button, StatusBar } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import React, {useEffect, useState, useRef } from 'react';
+import { View, Text, TouchableOpacity, Modal, StyleSheet, StatusBar } from 'react-native';
 import MapView from 'react-native-maps';
+import { Ionicons } from '@expo/vector-icons';
+import * as Location from 'expo-location';
 
 const OrderRideScreen1 = ({ navigation }) => {
   const [modalVisible, setModalVisible] = useState(false);
+  const mapRef = useRef(null);
+  
+//Zamyka okno modalne po powrocie na tą stronę dzieki czemu działają przyciski
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      if (modalVisible) {
+        setModalVisible(false);
+      }
+    });
+    return unsubscribe;
+  }, [navigation, modalVisible]);
 
-  const handlePaymentSelection = (option) => {
-    // Implementacja logiki po wyborze formy płatności
-    console.log('Wybrano metodę płatności:', option);
-    setModalVisible(false);
+  const goToCurrentLocation = () => {
+    (async () => {
+      let location = await Location.getCurrentPositionAsync({});
+      mapRef.current.animateToRegion({
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+        latitudeDelta: 0.005,
+        longitudeDelta: 0.005,
+      });
+    })();
   };
-
+  
   return (
     <View style={styles.container}>
-      {/* Przycisk powrotu i adres startowy */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Ionicons name="arrow-back" size={24} color="white" />
         </TouchableOpacity>
-          <Text style={styles.headerTitle}>Wybrana ulica</Text>
+        <Text style={styles.headerTitle}>Wybrana ulica</Text>
       </View>
-      
-    <MapView
+
+      <MapView
+        ref={mapRef}
         style={styles.map}
-        region={{
-          latitude: 37.78825,
-          longitude: -122.4324,
+        initialRegion={{
+          latitude: 50.8660773,
+          longitude: 20.6285677,
           latitudeDelta: 0.0922,
           longitudeDelta: 0.0421,
         }}
+            showsUserLocation={true}
+            showsMyLocationButton={false}
       />
 
-      {/* Dolne menu */}
-      <View style={styles.bottomMenu}>
-        <TouchableOpacity
-          style={styles.payButton}
-          onPress={() => setModalVisible(true)}
-        >
-          <Text style={styles.payButtonText}>Wybierz formę płatności</Text>
-        </TouchableOpacity>
-      </View>
+      <TouchableOpacity
+        style={styles.payButton}
+        onPress={() => setModalVisible(true)}
+      >
+        <Text style={styles.payButtonText}>Wybierz formę płatności</Text>
+      </TouchableOpacity>
 
-      {/* Modal wyboru płatności */}
       <Modal
         animationType="slide"
         transparent={true}
@@ -56,8 +72,7 @@ const OrderRideScreen1 = ({ navigation }) => {
             <Text style={styles.modalText}>Wybierz formę płatności:</Text>
             <TouchableOpacity
               style={styles.orangeButton}
-              //onPress={() => handlePaymentSelection('Portfel')}
-              onPress={() => navigation.navigate('SelectDriver')}
+              onPress={() => [navigation.navigate('SelectDriver'), setModalVisible(false)]}
             >
               <Text style={styles.orangeButtonText}>Portfel</Text>
             </TouchableOpacity>
@@ -70,6 +85,11 @@ const OrderRideScreen1 = ({ navigation }) => {
           </View>
         </View>
       </Modal>
+      <TouchableOpacity
+          style={styles.myLocationButton}
+          onPress={goToCurrentLocation}>
+        <Ionicons name="locate" size={25} color="black" />
+      </TouchableOpacity>
     </View>
   );
 };
@@ -79,6 +99,9 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#F1F1F1',
     paddingTop: StatusBar.currentHeight,
+  },
+  map: {
+    ...StyleSheet.absoluteFillObject,
   },
   header: {
     flexDirection: 'row',
@@ -128,16 +151,17 @@ const styles = StyleSheet.create({
     textAlign: "center"
   },
   payButton: {
-    margin: 20,
-    backgroundColor: '#FFA31A',
-    padding: 15,
-    alignItems: 'center',
-    borderRadius: 5,
+    position: 'absolute',
+    alignSelf: 'center',
+    bottom: 30,
+    paddingHorizontal: 30,
+    paddingVertical: 15,
+    backgroundColor: 'orange',
+    borderRadius: 20,
   },
   payButtonText: {
-    fontSize: 18,
-    color: '#FFFFFF',
-    fontWeight: 'bold',
+    fontSize: 20,
+    color: '#fff',
   },
   orangeButton: {
     backgroundColor: '#FFA500', // Pomarańczowy kolor
@@ -152,6 +176,14 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  myLocationButton: {
+    position: 'absolute',
+    right: 10,
+    bottom: 100,
+    backgroundColor: 'white',
+    padding: 10,
+    borderRadius: 20,
   },
 });
 

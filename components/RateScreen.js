@@ -19,6 +19,11 @@ const RateScreen = ({navigation}) => {
     }
     return stars;
   };
+
+  const handleSubmitReview = () => {
+    navigation.navigate('Home', { rideFinished: true });
+  };
+  
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -41,8 +46,8 @@ const RateScreen = ({navigation}) => {
         placeholderTextColor="#000"
         multiline
       />
-      <TouchableOpacity style={styles.button}>
-        <Text style={styles.buttonText}>Wyślij opinię</Text>
+      <TouchableOpacity style={styles.button} onPress={handleSubmitReview}>
+          <Text style={styles.buttonText}>Wyślij opinię</Text>
       </TouchableOpacity>
     </View>
   );

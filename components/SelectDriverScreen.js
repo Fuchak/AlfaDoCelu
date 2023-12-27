@@ -1,13 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect  } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, StatusBar } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-
-const driversData = [
-  // kierowcy na sztywno, tu by trzeba podpiąć pod bazę
-  { id: '1', initials: 'JK', name: 'Jan K.', distance: '0.5 km' },
-  { id: '2', initials: 'EB', name: 'Ewa B.', distance: '1.2 km' },
-  { id: '3', initials: 'AL', name: 'Arkadiusz L.', distance: '6.7 km' },
-];
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import API_BASE_URL from '../config';
 
 const DriverItem = ({ driver, onSelectDriver, isSelected }) => (
   <TouchableOpacity
@@ -25,17 +20,48 @@ const DriverItem = ({ driver, onSelectDriver, isSelected }) => (
 );
 
 const SelectDriverScreen = ({ navigation }) => {
+  const [driversData, setDriversData] = useState([]);
   const [selectedDriver, setSelectedDriver] = useState(null);
+
+  useEffect(() => {
+    const fetchDrivers = async () => {
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/kierowcy`);
+        const data = await response.json();
+        setDriversData(data);
+      } catch (error) {
+        console.error('Błąd podczas pobierania listy kierowców:', error);
+      }
+    };
+
+    fetchDrivers();
+  }, []);
 
   const handleSelectDriver = (driver) => {
     setSelectedDriver(driver.id);
     // Tutaj dodaj logikę dla wyboru kierowcy
   };
 
-  const onConfirmRide = () => {
+  const onConfirmRide = async () => {
     if (selectedDriver) {
       // Wywołanie funkcji przekazanej z HomeScreen
-      navigation.navigate('Home', { rideOrdered: true });
+      try {
+        const token = await AsyncStorage.getItem('userToken');
+        await fetch(`${API_BASE_URL}/api/kierowcy/update-status`, {
+          method: 'POST',
+          headers: {
+
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ kierowcaId: selectedDriver }),
+        });
+  
+        navigation.navigate('Home');
+      } catch (error) {
+        console.error('Błąd:', error);
+        alert('Nie udało się zaktualizować statusu kierowcy.');
+      }
     } else {
       alert('Proszę wybrać kierowcę');
     }
@@ -52,7 +78,7 @@ const SelectDriverScreen = ({ navigation }) => {
 
       <FlatList
         data={driversData}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
           <DriverItem
             driver={item}

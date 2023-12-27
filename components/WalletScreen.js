@@ -1,15 +1,49 @@
-import React from 'react';
-import { View, StyleSheet, Text, TouchableOpacity, ScrollView, SafeAreaView, StatusBar } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, StyleSheet, Text, TouchableOpacity, ScrollView, FlatList, StatusBar } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-
-const paymentsHistory = [
-  { id: 1, date: '2023-10-01', amount: '150,00 BLIK', description: 'Wpłata od Jan Kowalski' },
-  { id: 2, date: '2023-09-22', amount: '75,50 BLIK', description: 'Zwrot za zakupy' },
-  { id: 3, date: '2023-09-15', amount: '200,00 BLIK', description: 'Wpłata własna' },
-];
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import API_BASE_URL from '../config';
 
 const WalletScreen = ({navigation}) => {
+
+  const [saldo, setSaldo] = useState(0);
+  const [historiaTransakcji, setHistoriaTransakcji] = useState([]);
+  
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      fetchWalletData();
+    });
+
+    return unsubscribe;
+  }, [navigation]);
+  
+  const fetchWalletData = async () => {
+    try {
+      const token = await AsyncStorage.getItem('userToken');
+      const response = await fetch(`${API_BASE_URL}/api/user-wallet`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+  
+      if (!response.ok) {
+        throw new Error('Problem z pobraniem danych portfela');
+      }
+  
+      const data = await response.json();
+      setSaldo(data.saldo);
+      setHistoriaTransakcji(data.historiaTransakcji);
+    } catch (error) {
+      console.error('Błąd:', error);
+    }
+  };
+
+  const formatDate = (dateString) => {
+    const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+    return new Date(dateString).toLocaleDateString('pl-PL', options);
+  };
+
   return (
     <View style={styles.container}>
       {/* Header z przyciskiem powrotu i tytułem */}
@@ -25,7 +59,7 @@ const WalletScreen = ({navigation}) => {
       {/* Sekcja z saldem portfela */}
       <View style={styles.balanceSection}>
         <Text style={styles.balanceTextTitle}>Twoje saldo</Text>
-        <Text style={styles.balanceText}>0,00 ZŁ</Text>
+        <Text style={styles.balanceText}>{saldo} ZŁ</Text>
       </View>
 
       {/* Przycisk doładowania konta */}
@@ -43,11 +77,11 @@ const WalletScreen = ({navigation}) => {
       {/* Historia wpłat */}
       <ScrollView style={styles.historySection}>
         <Text style={styles.historyTitle}>Historia wpłat</Text>
-        {paymentsHistory.map(payment => (
-          <View key={payment.id} style={styles.paymentItem}>
-            <Text style={styles.paymentDate}>{payment.date}</Text>
-            <Text style={styles.paymentAmount}>{payment.amount}</Text>
-            <Text style={styles.paymentDescription}>{payment.description}</Text>
+        {historiaTransakcji.map(payment => (
+          <View key={payment.idTransakcji} style={styles.paymentItem}>
+            <Text style={styles.paymentDate}>{formatDate(payment.dataWplaty)}</Text>
+            <Text style={styles.paymentAmount}>{payment.kwotaWplaty} zł {payment.typWplaty}</Text>
+            <Text style={styles.paymentDescription}>{payment.rodzaj}</Text>
           </View>
         ))}
       </ScrollView>

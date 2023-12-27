@@ -1,15 +1,53 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, FlatList, SafeAreaView, StatusBar } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import API_BASE_URL from '../config';
 
 const NotificationsScreen = ({ navigation }) => {
   // przykladowe dane na sztywno zeby bylo widac wyglad, jak bedzie baza czy cos to wykrzykniki albo dzwonki maja byc ustawiane automatycznie w zaleznosci od typu powiadomienia
-  const [nofitications, setNofitications] = useState([
-    { id: '1', notificationType: '❗', notificationContent: 'Twoja taksówka już na ciebie czeka przy: (adres).' },
-    { id: '2', notificationType: '❗', notificationContent: 'Środki zostały pomyślnie wpłacone na Twój wirtualny portfel.'},
-    { id: '3', notificationType: '🔔', notificationContent: 'Nowa promocja: minus 1,00 PLN za każdy przejechany kilometr!' },
-    { id: '4', notificationType: '❗', notificationContent: 'Odpowiedź na Twoje zgłoszenie (temat).'},
-  ]);
+  const [notifications, setNotifications] = useState([]);
+
+  useEffect(() => {
+    fetchNotifications();
+  }, []);
+
+  const fetchNotifications = async () => {
+    try {
+      const token = await AsyncStorage.getItem('userToken');
+      const response = await fetch(`${API_BASE_URL}/api/notifications`, {
+        method: 'GET',
+            headers: {
+              'Authorization': `Bearer ${token}`,
+            },
+      });
+
+      if (!response.ok) {
+        throw new Error('Problem z pobraniem powiadomień');
+      }
+
+      const data = await response.json();
+      setNotifications(data);
+    } catch (error) {
+      console.error('Błąd:', error);
+    }
+  };
+
+  const getIconDetails = (type) => {
+    switch (type) {
+      case 'ALERT':
+        return { name: 'warning', color: 'red' };
+      case 'INFO':
+        return { name: 'notifications', color: 'orange' };
+      default:
+        return { name: 'information-circle', color: 'black' };
+    }
+  };
+
+  const formatDate = (dateString) => {
+    const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+    return new Date(dateString).toLocaleDateString('pl-PL', options);
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -20,11 +58,17 @@ const NotificationsScreen = ({ navigation }) => {
         <Text style={styles.headerTitle}>Powiadomienia</Text>
       </View>
       <FlatList
-        data={nofitications}
-        keyExtractor={(item) => item.id}
+        data={notifications}
+        keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
-          <View style={styles.nofiticationItem}>
-            <Text style={styles.nofiticationText}> {item.notificationType}   {item.notificationContent}</Text>
+          <View style={styles.notificationItem}>
+            <Ionicons 
+              name={getIconDetails(item.typPowiadomienia).name}
+              size={24} 
+              color={getIconDetails(item.typPowiadomienia).color} 
+            />
+            <Text style={styles.dateText}>{formatDate(item.dataCzas)}</Text>
+            <Text style={styles.notificationText}>{item.trescPowiadomienia}</Text>
           </View>
         )}
       />
@@ -50,14 +94,14 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 20,
   },
-  nofiticationItem: {
+  notificationItem: {
     backgroundColor: 'white',
     marginVertical: 5,
     marginHorizontal: 10,
     padding: 10,
     borderRadius: 5,
   },
-  nofiticationText: {
+  notificationText: {
     color: '#595858',
     fontSize: 16,
     marginBottom: 2,

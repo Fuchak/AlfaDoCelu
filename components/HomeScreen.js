@@ -3,6 +3,9 @@ import { View, StyleSheet, Text, TouchableOpacity, Modal, ActivityIndicator, Sta
 import MapView from 'react-native-maps';
 import { Ionicons } from '@expo/vector-icons';
 import * as Location from 'expo-location';
+import { Magnetometer } from 'expo-sensors';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import API_BASE_URL from '../config';
 
 const defaultRegion = {
   latitude: 50.8660773,
@@ -11,19 +14,65 @@ const defaultRegion = {
   longitudeDelta: 0.0421,
 };
 
-const HomeScreen = ({ navigation, route }) => {
+const HomeScreen = ({ navigation}) => {
   const mapRef = useRef(null);
   const [region, setRegion] = useState(defaultRegion);
   const [errorMsg, setErrorMsg] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isRideOrdered, setIsRideOrdered] = useState(false);
+  const [SelectedDriverID, setSelectedDriverId] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
+
+  const [isUserLocated, setIsUserLocated] = useState(false);
+  const [isMagnetometerActive, setIsMagnetometerActive] = useState(false);
+  const [heading, setHeading] = useState(0);
+
+  useEffect(() => {
+    const fetchRideStatus = async () => {
+      const token = await AsyncStorage.getItem('userToken');
+      if (token) {
+        try {
+          const response = await fetch(`${API_BASE_URL}/api/get-ride-status`, {
+            method: 'GET',
+            headers: {
+              'Authorization': `Bearer ${token}`,
+            },
+          });
+          const data = await response.json();
+          setIsRideOrdered(data.isRideOrdered);
+          setSelectedDriverId(data.selectedDriverId);
+        } catch (error) {
+          console.error('Błąd:', error);
+        }
+      }
+    };
+  
+    const unsubscribe = navigation.addListener('focus', fetchRideStatus);
+    return unsubscribe;
+  }, [navigation]);
+
+  useEffect(() => {
+    let subscription;
+    if (isMagnetometerActive) {
+      subscription = Magnetometer.addListener(data => {
+        const angle = _angle(data);
+        setHeading(angle);
+      });
+    } else {
+      subscription && subscription.remove();
+    }
+  
+    return () => {
+      subscription && subscription.remove();
+    };
+  }, [isMagnetometerActive]);
 
   useEffect(() => {
     (async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
-        setRegion(defaultRegion);
+        setErrorMsg('Odmowa dostępu do lokalizacji');
+        setRegion(defaultRegion); // Ustaw domyślny region
         setIsLoading(false);
         return;
       }
@@ -36,17 +85,15 @@ const HomeScreen = ({ navigation, route }) => {
           longitudeDelta: 0.005,
         });
       } catch (error) {
-        setRegion(defaultRegion);
+        //Wyciszamy błąd gdy nie damy uprawnień lokalizacji bo po co ma nam się wyświetlać
+        if (!error.message.includes("unsatisfied device settings")) {
+          console.error('Błąd podczas uzyskiwania lokalizacji:', error);
+        }
+        setRegion(defaultRegion); // Ustawiamy domyślny region w przypadku błedu lokalizacji
       }
       setIsLoading(false);
     })();
-  
-    if (route.params?.rideOrdered) {
-      setIsRideOrdered(true);
-    }else if (route.params?.rideFinished) {
-      setIsRideOrdered(false);
-    }
-  }, [route.params?.rideOrdered, route.params?.rideFinished]);
+  }, );
 
   const goToCurrentLocation = () => {
     (async () => {
@@ -57,7 +104,47 @@ const HomeScreen = ({ navigation, route }) => {
         latitudeDelta: 0.005,
         longitudeDelta: 0.005,
       });
+      setIsUserLocated(true);
+      setIsMagnetometerActive(true);
     })();
+  };
+
+  const _angle = (magnetometer) => {
+    let angle = 0;
+    if (magnetometer) {
+      let { x, y } = magnetometer;
+      if (Math.atan2(y, x) >= 0) {
+        angle = Math.atan2(y, x) * (180 / Math.PI);
+      } else {
+        angle = (Math.atan2(y, x) + 2 * Math.PI) * (180 / Math.PI);
+      }
+    }
+    return Math.round(angle);
+  };
+
+  const updateDriverStatus = async (driverId) => {
+    try {
+      const token = await AsyncStorage.getItem('userToken');
+      await fetch(`${API_BASE_URL}/api/kierowcy/update-status-available`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ kierowcaId: driverId }),
+      });
+    } catch (error) {
+      console.error('Błąd:', error);
+      alert('Nie udało się zaktualizować statusu kierowcy.');
+    }
+  };
+
+  const onArrivedAtDestination = async () => {
+    if (SelectedDriverID) {
+      await updateDriverStatus(SelectedDriverID);
+      setSelectedDriverId(null);  // Resetowanie wybranego kierowcy
+    }
+    navigation.navigate('Rate');
   };
 
   return (
@@ -75,6 +162,13 @@ const HomeScreen = ({ navigation, route }) => {
             showsUserLocation={true}
             followUserLocation={true}
             showsMyLocationButton={false}
+            onRegionChangeComplete={(newRegion) => {
+              if (newRegion.latitude.toFixed(4) !== region.latitude.toFixed(4) ||
+                  newRegion.longitude.toFixed(4) !== region.longitude.toFixed(4)) {
+                setIsUserLocated(false);
+                setIsMagnetometerActive(false);
+              }
+            }}
           />
         )}
         <TouchableOpacity
@@ -123,24 +217,33 @@ const HomeScreen = ({ navigation, route }) => {
 
         <TouchableOpacity
           style={styles.orderButton}
-          onPress={() => {
-            if (isRideOrdered) {
-              navigation.navigate('Rate');
-            } else {
-              navigation.navigate('OrderRide');
-            }
-          }}
+          onPress={isRideOrdered ? onArrivedAtDestination : () => navigation.navigate('OrderRide')}
         >
           <Text style={styles.orderButtonText}>{isRideOrdered ? "Jestem na miejscu" : "Zamów przejazd"}</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
           style={styles.myLocationButton}
-          onPress={goToCurrentLocation}>
-          <Ionicons name="locate" size={25} color="black" />
+          onPress={() => {
+            if (isUserLocated) {
+              setIsMagnetometerActive(!isMagnetometerActive);
+            } else {
+              goToCurrentLocation();
+            }
+          }}
+        >
+          <Ionicons
+            name={isUserLocated ? "compass" : "locate"}
+            size={25}
+            color="black"
+            style={isUserLocated && isMagnetometerActive ? { transform: [{ rotate: `${heading}deg` }] } : {}}
+          />
+          {isUserLocated && isMagnetometerActive && (
+            <Text style={styles.headingText}>{Math.round(heading)}°</Text>
+          )}
         </TouchableOpacity>
       </View>
-
+      
   );
 };
 
@@ -150,7 +253,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     alignItems: 'center',
   },
-  map: {
+map: {
     ...StyleSheet.absoluteFillObject,
   },
   notificationButton: {
@@ -198,6 +301,19 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 20,
   },
+  compassContainer: {
+    position: 'absolute',
+    right: 10,
+    bottom: 150,
+    backgroundColor: 'white',
+    padding: 10,
+    borderRadius: 20,
+  },
+  headingText: {
+    fontSize: 12,
+    color: 'black',
+    marginLeft: 3,
+  },
   infoButton: {
     position: 'absolute',
     bottom: 75,
@@ -230,7 +346,6 @@ const styles = StyleSheet.create({
     paddingVertical: 2,
     borderBottomWidth: 1,
     borderBottomColor: '#E8E8E8',
-
   },
   modalOverlay: {
     flex: 1,

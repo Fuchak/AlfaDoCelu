@@ -1,6 +1,8 @@
-import React, {useState} from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, StatusBar} from 'react-native';
+import React, {useEffect,useState, useCallback } from 'react';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, StatusBar, BackHandler} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import API_BASE_URL from '../config';
 
 const RateScreen = ({navigation}) => {
   const [rating, setRating] = useState(0); // Użyjemy stanu do przechowywania oceny
@@ -20,17 +22,45 @@ const RateScreen = ({navigation}) => {
     return stars;
   };
 
+  const submitReviewAndUpdateRideStatus = async () => {
+    try {
+      // Tutaj można wysłać ocenę do API (jeśli jest potrzebna)
+      const token = await AsyncStorage.getItem('userToken');
+      await fetch(`${API_BASE_URL}/api/kierowcy/update-status-available`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      navigation.navigate('Home');
+    } catch (error) {
+      console.error('Błąd:', error);
+    }
+  };
+
+  const handleBackPress = useCallback(() => {
+    submitReviewAndUpdateRideStatus();
+    return true;  // Zapobiega domyślnemu zachowaniu (zamykanie aplikacji)
+  }, [submitReviewAndUpdateRideStatus]);
+
+  useEffect(() => {
+    BackHandler.addEventListener('hardwareBackPress', handleBackPress);
+
+    return () => {
+      BackHandler.removeEventListener('hardwareBackPress', handleBackPress);
+    };
+  }, [handleBackPress]);
+
   const handleSubmitReview = () => {
-    navigation.navigate('Home', { rideFinished: true });
+    handleBackPress();
   };
   
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-      <TouchableOpacity onPress={() => navigation.goBack()}>
-        {
+        <TouchableOpacity onPress={handleBackPress}>
           <Ionicons name="arrow-back" size={24} color="white" />
-        }
         </TouchableOpacity>
         <Text style={styles.headerText}>Oceń przejazd</Text>
       </View>

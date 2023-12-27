@@ -1,36 +1,66 @@
-import React, { useState } from 'react';
-import {
-  View,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  Keyboard,
-  Alert,
-  StatusBar
-} from 'react-native';
+import React, { useState, useRef } from 'react';
+import { View, StyleSheet, Text, TextInput, TouchableOpacity, Keyboard, Alert, StatusBar } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import API_BASE_URL from '../config';
 
 const ReloadBlikScreen = ({navigation}) => {
+  
   const [amount, setAmount] = useState('');
   const [blikCode, setBlikCode] = useState(['', '', '', '', '', '']);
   const [isCodeValid, setIsCodeValid] = useState(true);
+  const blikInputRefs = useRef(blikCode.map(() => React.createRef()));
 
-  const handleReload = () => {
-    if (blikCode.every(code => code.length === 1)) {
-      setIsCodeValid(true);
-      Keyboard.dismiss();
-      // Logika doładowania...
+  const handleReload = async () => {
+    const joinedBlikCode = blikCode.join('');
+    const parsedAmount = parseFloat(amount);
+
+    if (!isFinite(parsedAmount) || parsedAmount <= 0) {
+      Alert.alert("Błąd", "Wprowadź prawidłową kwotę.");
+      return;
+    }
+
+    setIsCodeValid(true);
+    Keyboard.dismiss();
+
+    try {
+    const token = await AsyncStorage.getItem('userToken');
+    const response = await fetch(`${API_BASE_URL}/api/reload-account`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ amount: parsedAmount, blikCode: joinedBlikCode }),
+    });
+
+    const responseData = await response.json();
+    if (responseData.success) {
       Alert.alert("Doładowanie", "Konto zostało doładowane.");
     } else {
       setIsCodeValid(false);
+      Alert.alert("Błąd", responseData.message || "Kod BLIK jest nieprawidłowy.");
     }
+  } catch (error) {
+    console.error('Błąd:', error);
+    Alert.alert("Błąd", "Nie udało się doładować konta.");
+  }
   };
 
   const handleBlikCodeChange = (text, index) => {
     const newBlikCode = [...blikCode];
     newBlikCode[index] = text;
     setBlikCode(newBlikCode);
+
+    // Przejście do następnego pola po wpisaniu cyfry
+    if (text && index < blikCode.length - 1) {
+      blikInputRefs.current[index + 1].focus();
+    }
+  
+    // Powrót do poprzedniego pola po usunięciu cyfry
+    if (!text && index > 0) {
+      blikInputRefs.current[index - 1].focus();
+    }
   };
 
   return (
@@ -56,15 +86,16 @@ const ReloadBlikScreen = ({navigation}) => {
       <Text style={styles.label}>Wpisz kod BLIK:</Text>
       <View style={styles.blikCodeContainer}>
         {blikCode.map((code, index) => (
-          <TextInput
-            key={index}
-            style={[styles.blikInput, !isCodeValid && styles.inputError]}
-            keyboardType="numeric"
-            maxLength={1}
-            onChangeText={text => handleBlikCodeChange(text, index)}
-            value={code}
-          />
-        ))}
+        <TextInput
+          key={index}
+          ref={el => (blikInputRefs.current[index] = el)}
+          style={[styles.blikInput, !isCodeValid && styles.inputError]}
+          keyboardType="numeric"
+          maxLength={1}
+          onChangeText={text => handleBlikCodeChange(text, index)}
+          value={code}
+        />
+      ))}
       </View>
       {!isCodeValid && <Text style={styles.errorText}>Kod BLIK jest nieprawidłowy</Text>}
 

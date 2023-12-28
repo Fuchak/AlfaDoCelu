@@ -11,16 +11,6 @@ CREATE TABLE Uzytkownicy (
   wybranyKierowcaId INT
 );
 
-CREATE TABLE Wplaty (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  uzytkownikId INT,
-  data DATETIME NOT NULL,
-  kwota DECIMAL(10, 2) NOT NULL,
-  metoda VARCHAR(50) NOT NULL,
-  status VARCHAR(50) NOT NULL,
-  FOREIGN KEY (uzytkownikId) REFERENCES Uzytkownicy(id)
-);
-
 CREATE TABLE Przejazdy (
   id INT AUTO_INCREMENT PRIMARY KEY,
   uzytkownikId INT,
@@ -41,15 +31,21 @@ CREATE TABLE WeryfikacjaUzytkownika (
   INDEX (email, numerTelefonu)
 );
 
+INSERT INTO `WeryfikacjaUzytkownika` (`id`, `email`, `numerTelefonu`, `kodWeryfikacyjny`, `dataWaznosciKodu`) VALUES
+(1, NULL, '518050511', '654133', '2023-12-15 18:37:14');
+
+INSERT INTO `Uzytkownicy` (`id`, `imie`, `numerTelefonu`, `email`, `haslo`, `saldo`, `lokalizacjaDom`, `lokalizacjaPraca`) VALUES
+(1, 'Hubert', '518050511', NULL, '$2b$10$7f1miqYAxCaAwtxh2.i26OGe4aAVvMx0lahxo8ofqOqNLaiLMSpse', 0.00, NULL, NULL);
+
 CREATE TABLE Powiadomienia (
   id INT AUTO_INCREMENT PRIMARY KEY,
-  typPowiadomienia VARCHAR(20);
+  typPowiadomienia VARCHAR(20),
   trescPowiadomienia TEXT,
   dataCzas DATETIME,
   idUzytkownika INT
 );
 
-INSERT INTO Powiadomienia (typPowiadomienia, trescPowiadomienia, dataCzas, idUzytkownika, statusPrzeczytania) VALUES
+INSERT INTO Powiadomienia (typPowiadomienia, trescPowiadomienia, dataCzas, idUzytkownika) VALUES
 ('ALERT', 'Twoja taksówka już na ciebie czeka przy: (adres).', NOW(), 1),
 ('ALERT', 'Środki zostały pomyślnie wpłacone na Twój wirtualny portfel.', NOW(), 1),
 ('INFO', 'Nowa promocja: minus 1,00 PLN za każdy przejechany kilometr!', NOW(), 1),
@@ -58,7 +54,6 @@ INSERT INTO Powiadomienia (typPowiadomienia, trescPowiadomienia, dataCzas, idUzy
 CREATE TABLE TransakcjePortfela (
   idTransakcji INT AUTO_INCREMENT PRIMARY KEY,
   idUzytkownika INT,
-  saldo DECIMAL(10, 2),
   dataWplaty DATETIME,
   kwotaWplaty DECIMAL(10, 2),
   typWplaty VARCHAR(50),
@@ -66,7 +61,7 @@ CREATE TABLE TransakcjePortfela (
   FOREIGN KEY (idUzytkownika) REFERENCES Uzytkownicy(id)
 );
 
-INSERT INTO TransakcjePortfela (idUzytkownika, saldo, dataWplaty, kwotaWplaty, typWplaty, rodzaj) VALUES
+INSERT INTO TransakcjePortfela (idUzytkownika, dataWplaty, kwotaWplaty, typWplaty, rodzaj) VALUES
 (1, '2023-10-01', 150.00, 'BLIK', 'Wpłata'),
 (1, '2023-09-15', 200.00, 'BLIK', 'Zwrot'),
 (1, '2023-08-10', 100.00, 'BLIK', 'Wpłata'),
@@ -80,11 +75,13 @@ CREATE TABLE Kierowcy (
   numer_telefonu VARCHAR(50),
   odleglosc DECIMAL(3, 1),
   ocena INT,
-  dostepnosc BOOLEAN
+  dostepnosc BOOLEAN,
+  iloscOcen INT DEFAULT 0,
+  sumaOcen INT DEFAULT 0
 );
 
-INSERT INTO Kierowcy (imie, inicjal_nazwiska, numer_telefonu, odleglosc, ocena, dostepnosc) VALUES
-('Jan', 'K', '500500500', 0.5, 4, true),
-('Anna', 'N', '600600600', 1.2, 5, true),
-('Paweł', 'P', '700700700', 2.0, 3, true),
-('Ewa', 'E', '800800800', 1.5, 4, false);
+INSERT INTO Kierowcy (imie, inicjal_nazwiska, numer_telefonu, odleglosc, ocena, dostepnosc, iloscOcen, sumaOcen) VALUES
+('Jan', 'K', '500500500', 0.5, 4, true, 0, 0),
+('Anna', 'N', '600600600', 1.2, 5, true, 0, 0),
+('Paweł', 'P', '700700700', 2.0, 3, true, 0, 0),
+('Ewa', 'E', '800800800', 1.5, 4, false, 0, 0);

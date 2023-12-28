@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, StyleSheet, Text, TouchableOpacity, Modal, ActivityIndicator, StatusBar } from 'react-native';
+import { View, StyleSheet, Text, TouchableOpacity, Modal, ActivityIndicator, StatusBar, Image  } from 'react-native';
 import MapView from 'react-native-maps';
 import { Ionicons } from '@expo/vector-icons';
 import * as Location from 'expo-location';
@@ -122,29 +122,28 @@ const HomeScreen = ({ navigation}) => {
     return Math.round(angle);
   };
 
-  const updateDriverStatus = async (driverId) => {
-    try {
-      const token = await AsyncStorage.getItem('userToken');
-      await fetch(`${API_BASE_URL}/api/kierowcy/update-status-available`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ kierowcaId: driverId }),
-      });
-    } catch (error) {
-      console.error('Błąd:', error);
-      alert('Nie udało się zaktualizować statusu kierowcy.');
+  const _direction = (degree) => {
+    if (degree >= 22.5 && degree < 67.5) {
+      return 'NE';
+    } else if (degree >= 67.5 && degree < 112.5) {
+      return 'E';
+    } else if (degree >= 112.5 && degree < 157.5) {
+      return 'SE';
+    } else if (degree >= 157.5 && degree < 202.5) {
+      return 'S';
+    } else if (degree >= 202.5 && degree < 247.5) {
+      return 'SW';
+    } else if (degree >= 247.5 && degree < 292.5) {
+      return 'W';
+    } else if (degree >= 292.5 && degree < 337.5) {
+      return 'NW';
+    } else {
+      return 'N';
     }
   };
 
-  const onArrivedAtDestination = async () => {
-    if (SelectedDriverID) {
-      await updateDriverStatus(SelectedDriverID);
-      setSelectedDriverId(null);  // Resetowanie wybranego kierowcy
-    }
-    navigation.navigate('Rate');
+  const getDirectionStyle = (direction) => {
+    return direction === 'N' ? styles.northDirection : null;
   };
 
   return (
@@ -162,6 +161,8 @@ const HomeScreen = ({ navigation}) => {
             showsUserLocation={true}
             followUserLocation={true}
             showsMyLocationButton={false}
+            
+            showsCompass={false}
             onRegionChangeComplete={(newRegion) => {
               if (newRegion.latitude.toFixed(4) !== region.latitude.toFixed(4) ||
                   newRegion.longitude.toFixed(4) !== region.longitude.toFixed(4)) {
@@ -217,7 +218,14 @@ const HomeScreen = ({ navigation}) => {
 
         <TouchableOpacity
           style={styles.orderButton}
-          onPress={isRideOrdered ? onArrivedAtDestination : () => navigation.navigate('OrderRide')}
+          onPress={() => {
+            if (isRideOrdered) {
+              navigation.navigate('Rate', { selectedDriverId: SelectedDriverID });
+              setSelectedDriverId(null);
+            } else {
+              navigation.navigate('OrderRide');
+            }
+          }}
         >
           <Text style={styles.orderButtonText}>{isRideOrdered ? "Jestem na miejscu" : "Zamów przejazd"}</Text>
         </TouchableOpacity>
@@ -232,6 +240,7 @@ const HomeScreen = ({ navigation}) => {
             }
           }}
         >
+         
           <Ionicons
             name={isUserLocated ? "compass" : "locate"}
             size={25}
@@ -239,7 +248,9 @@ const HomeScreen = ({ navigation}) => {
             style={isUserLocated && isMagnetometerActive ? { transform: [{ rotate: `${heading}deg` }] } : {}}
           />
           {isUserLocated && isMagnetometerActive && (
-            <Text style={styles.headingText}>{Math.round(heading)}°</Text>
+            <Text style={[styles.headingText, getDirectionStyle(_direction(Math.round(heading)))]}>
+                {_direction(Math.round(heading))}
+            </Text>
           )}
         </TouchableOpacity>
       </View>
@@ -355,6 +366,13 @@ map: {
   modalOptionText: {
     fontSize: 15,
     textAlign: 'center',
+  },
+  headingText: {
+    fontSize: 12,
+    textAlign: 'center',
+  },
+  northDirection: {
+    color: 'red',
   },
 });
 

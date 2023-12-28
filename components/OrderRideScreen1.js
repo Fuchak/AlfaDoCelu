@@ -50,6 +50,7 @@ const OrderRideScreen1 = ({ navigation }) => {
         }}
             showsUserLocation={true}
             showsMyLocationButton={false}
+            showsCompass={false}
       />
 
       <TouchableOpacity

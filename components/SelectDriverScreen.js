@@ -14,6 +14,7 @@ const DriverItem = ({ driver, onSelectDriver, isSelected }) => (
     </View>
     <View style={styles.itemContainer}>
       <Text style={styles.driverDistance}>{driver.name}</Text>
+      <Text style={styles.driverDistance}>Ocena: {driver.rating}</Text>
       <Text style={styles.driverDistance}>Odległość: {driver.distance}</Text>
     </View>
   </TouchableOpacity>

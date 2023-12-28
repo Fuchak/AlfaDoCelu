@@ -1,2 +1,2 @@
-const API_BASE_URL = 'http://192.168.0.42:3000';
+const API_BASE_URL = 'https://alfadocelu.vercel.app';
 export default API_BASE_URL;

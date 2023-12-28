@@ -4,7 +4,8 @@ import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import API_BASE_URL from '../config';
 
-const RateScreen = ({navigation}) => {
+const RateScreen = ({navigation, route}) => {
+  const selectedDriverId = route.params?.selectedDriverId;
   const [rating, setRating] = useState(0); // Użyjemy stanu do przechowywania oceny
     const renderStars = () => {
     const stars = [];
@@ -22,21 +23,49 @@ const RateScreen = ({navigation}) => {
     return stars;
   };
 
-  const submitReviewAndUpdateRideStatus = async () => {
+  const submitReview = async () => {
     try {
-      // Tutaj można wysłać ocenę do API (jeśli jest potrzebna)
+      await fetch(`${API_BASE_URL}/api/kierowcy/rate`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ kierowcaId: selectedDriverId, ocena: rating }),
+      });
+      navigation.goBack();
+    } catch (error) {
+      console.error('Błąd:', error);
+    }
+  };
+  
+
+  const updateDriverStatus = async (driverId) => {
+    try {
       const token = await AsyncStorage.getItem('userToken');
       await fetch(`${API_BASE_URL}/api/kierowcy/update-status-available`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ kierowcaId: driverId }),
       });
-      navigation.navigate('Home');
     } catch (error) {
       console.error('Błąd:', error);
+      alert('Nie udało się zaktualizować statusu kierowcy.');
     }
+  };
+
+  const onArrivedAtDestination = async () => {
+    if (selectedDriverId) {
+      await updateDriverStatus(selectedDriverId);
+    }
+  };
+
+  const submitReviewAndUpdateRideStatus = async () => {
+      onArrivedAtDestination();
+      //Dodane opóźnienie bo focus na home za szybko czytał baze? i zwracał true a było false na bazie (czy aktywny przejazd)
+      setTimeout(() => navigation.navigate('Home'), 100); 
   };
 
   const handleBackPress = useCallback(() => {
@@ -53,6 +82,7 @@ const RateScreen = ({navigation}) => {
   }, [handleBackPress]);
 
   const handleSubmitReview = () => {
+    submitReview();
     handleBackPress();
   };
   

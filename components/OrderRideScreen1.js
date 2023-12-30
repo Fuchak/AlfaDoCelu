@@ -41,7 +41,7 @@ const OrderRideScreen1 = ({ navigation }) => {
 
       <MapView
         ref={mapRef}
-        style={styles.map}
+        style={StyleSheet.absoluteFillObject}
         initialRegion={{
           latitude: 50.8660773,
           longitude: 20.6285677,
@@ -100,9 +100,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#F1F1F1',
     paddingTop: StatusBar.currentHeight,
-  },
-  map: {
-    ...StyleSheet.absoluteFillObject,
   },
   header: {
     flexDirection: 'row',

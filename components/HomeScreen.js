@@ -1,22 +1,16 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { View, StyleSheet, Text, TouchableOpacity, Modal, ActivityIndicator, StatusBar, Image  } from 'react-native';
-import MapView from 'react-native-maps';
+import MapView, {PROVIDER_GOOGLE} from 'react-native-maps';
 import { Ionicons } from '@expo/vector-icons';
 import * as Location from 'expo-location';
 import { Magnetometer } from 'expo-sensors';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import API_BASE_URL from '../config';
 
-const defaultRegion = {
-  latitude: 50.8660773,
-  longitude: 20.6285677,
-  latitudeDelta: 0.0922,
-  longitudeDelta: 0.0421,
-};
 
 const HomeScreen = ({ navigation}) => {
   const mapRef = useRef(null);
-  const [region, setRegion] = useState(defaultRegion);
+  const [region, setRegion] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isRideOrdered, setIsRideOrdered] = useState(false);
@@ -72,7 +66,6 @@ const HomeScreen = ({ navigation}) => {
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
         setErrorMsg('Odmowa dostępu do lokalizacji');
-        setRegion(defaultRegion); // Ustaw domyślny region
         setIsLoading(false);
         return;
       }
@@ -89,7 +82,6 @@ const HomeScreen = ({ navigation}) => {
         if (!error.message.includes("unsatisfied device settings")) {
           console.error('Błąd podczas uzyskiwania lokalizacji:', error);
         }
-        setRegion(defaultRegion); // Ustawiamy domyślny region w przypadku błedu lokalizacji
       }
       setIsLoading(false);
     })();
@@ -156,8 +148,14 @@ const HomeScreen = ({ navigation}) => {
         ) : (
           <MapView
             ref={mapRef}
-            style={styles.map}
-            initialRegion={region}
+            style={StyleSheet.absoluteFillObject}
+            provider={MapView.PROVIDER_GOOGLE}
+            initialRegion={{
+              latitude: 50.8660773,
+              longitude: 20.6285677,
+              latitudeDelta: 0.0922,
+              longitudeDelta: 0.0421,
+            }}
             showsUserLocation={true}
             followUserLocation={true}
             showsMyLocationButton={false}
@@ -263,9 +261,6 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
     justifyContent: 'flex-end',
     alignItems: 'center',
-  },
-map: {
-    ...StyleSheet.absoluteFillObject,
   },
   notificationButton: {
     position: 'absolute',

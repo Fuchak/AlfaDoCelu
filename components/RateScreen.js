@@ -65,7 +65,7 @@ const RateScreen = ({navigation, route}) => {
   const submitReviewAndUpdateRideStatus = async () => {
       onArrivedAtDestination();
       //Dodane opóźnienie bo focus na home za szybko czytał baze? i zwracał true a było false na bazie (czy aktywny przejazd)
-      setTimeout(() => navigation.navigate('Home'), 100); 
+      setTimeout(() => navigation.navigate('Home'), 4000); 
   };
 
   const handleBackPress = useCallback(() => {

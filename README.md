@@ -1,38 +1,49 @@
+README made by Fuczi
+
 # Afla Do Celu
 
 Projekt aplikacji do zamawiania alfy jako taxi.
 
 ## Wymagania
 
-- XAMPP
-- NODE.js
+- XAMPP (Aktualnie baza zdalnie na https://www.db4free.net/phpMyAdmin/ )
+- Login: - `student3`
+- Hasło: - `student3`
+- NODE.js (Aktualnie serwer zdalnie na https://glitch.com/edit/#!/substantial-winter-kingfisher?path=server.js%3A4%3A29 )
 - Visual Studio Code
 
 ## Konfiguracja
 
-### Serwer
+### Aplikacja
+W folderze "aplikacji" zainstaluj zależności node/expo używając poniższych komend:
+- npm install 
+- npx expo install --fix (Jeśli potrzebne)
+
+### Serwer (Jeśli lokalny)
 W folderze "serwer" zainstaluj zależności node.js używając poniższych komend:
 - npm init -y
 - npm install express mysql bcrypt body-parser cors bcrypt jsonwebtoken (Sprawdzić czy to działa)
 - npm install -g nodemon
 
-### Aplikacja
-W folderze "aplikacji" zainstaluj zależności node/expo używając poniższych komend:
-- npm install -g expo-cli
-- npx expo install --fix
+ 1. Obsługa:
+Otwieramy jako administrator konsolę w folderze serwera:
+   - `nodemon server.js` - start 
+   - `rs` - restart
+   - `CTRL+C` - stop
 
-### XAMPP:
+### XAMPP (Jeśli lokalny)
 1. Startujemy Apache i MySQL.
 2. Tworzymy użytkownika `student3` z hasłem `student3` (serwer lokalny).
 3. Tworzymy bazę danych `afladocelu`.
 4. Tworzymy tabele (z pliku `Baza_Creaty.txt`).
 
-### Node.js:
-1. Otwieramy jako administrator konsolę w folderze serwera i wpisujemy komendę: `nodemon server.js`.
-   
-   Obsługa tej konsoli:
-   - `rs` - restart
-   - `CTRL+C` - stop
+## Uruchamianie Programu
+
+1. W folderze aplikacji otwieramy konsolę i wpisujemy polecenie: `npx expo start`.
+2. W aplikacji Expo Go na telefonie Android skanujemy kod QR.
+3. Przykładowe konto do zalogowania
+	- Login: - `518050511`
+	- Hasło: - `Kargo2001!`
 
 ## Proces Commitowania za pomocą Git Bash
 
@@ -51,20 +62,12 @@ W folderze "aplikacji" zainstaluj zależności node/expo używając poniższych 
 - Opisujemy naszego commita.
 - Niebieski przycisk z listy rozwijanej wybieramy "Commit & Sync".
 
-## Uruchamianie Programu
-
-1. W folderze aplikacji otwieramy konsolę i wpisujemy polecenie: `npx expo start`.
-2. Zmieniamy w pliku `config.js` adres na ten wyświetlony przez Metro Bundlera.
-3. W aplikacji Expo Go na telefonie Android skanujemy kod QR.
-
-   UWAGA! Telefon musi być w tej samej sieci co komputer, z którego uruchamiamy aplikację.
-
 ## Licencja
 
-Licencja na podstawie przywłaszczenia essa.
+Licencji brak.
 
-## Autorzy i Wkład
+## Autorzy
 
-- Hubert Futrzyński aka Fuczi
+- Hubert Futrzyński aka Fuczi 
 - Mateusz Szczepański
 - Hanna Sokół

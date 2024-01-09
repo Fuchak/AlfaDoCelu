@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import React, { useState, useEffect  } from 'react';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, BackHandler } from 'react-native';
 import API_BASE_URL from '../config';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -46,6 +46,16 @@ const LoginScreen = ({ navigation }) => {
     }
   };
 
+  useEffect(() => {
+    const backAction = () => {
+      BackHandler.exitApp(); 
+      return true; 
+    };
+
+    const backHandler = BackHandler.addEventListener('hardwareBackPress', backAction);
+
+    return () => backHandler.remove();
+  }, []);
 
   return (
     <View style={styles.container}>

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, StyleSheet, Text, TouchableOpacity, Modal, ActivityIndicator, StatusBar, Image  } from 'react-native';
+import { View, StyleSheet, Text, TouchableOpacity, Modal, ActivityIndicator, StatusBar, BackHandler } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 import MapView, {PROVIDER_GOOGLE} from 'react-native-maps';
 import { Ionicons } from '@expo/vector-icons';
 import * as Location from 'expo-location';
@@ -16,10 +17,45 @@ const HomeScreen = ({ navigation}) => {
   const [isRideOrdered, setIsRideOrdered] = useState(false);
   const [SelectedDriverID, setSelectedDriverId] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
-
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isUserLocated, setIsUserLocated] = useState(false);
   const [isMagnetometerActive, setIsMagnetometerActive] = useState(false);
   const [heading, setHeading] = useState(0);
+
+useFocusEffect(
+    React.useCallback(() => {
+      const onBackPress = () => {
+        if (isDrawerOpen) {
+          navigation.closeDrawer();
+          return true;
+        } else {
+          BackHandler.exitApp();
+          return true;
+        }
+      };
+
+      BackHandler.addEventListener('hardwareBackPress', onBackPress);
+
+      return () =>
+        BackHandler.removeEventListener('hardwareBackPress', onBackPress);
+    }, [isDrawerOpen])
+  );
+
+useEffect(() => {
+  // Słuchacze zdarzeń drawera
+  const openDrawerListener = navigation.addListener('drawerOpen', () => {
+    setIsDrawerOpen(true);
+  });
+  const closeDrawerListener = navigation.addListener('drawerClose', () => {
+    setIsDrawerOpen(false);
+  });
+
+  return () => {
+    // Usuwanie słuchaczy
+    openDrawerListener();
+    closeDrawerListener();
+  };
+}, [navigation]);
 
   useEffect(() => {
     const fetchRideStatus = async () => {
@@ -178,9 +214,11 @@ const HomeScreen = ({ navigation}) => {
         
         <TouchableOpacity
           style={styles.menuButton}
-          onPress={() => navigation.toggleDrawer()}>
+          onPress={() => navigation.toggleDrawer()}
+        >
           <Ionicons name="menu" size={25} color="black" />
         </TouchableOpacity>
+
         
         {isRideOrdered && (
         <TouchableOpacity style={styles.infoButton} onPress={() => setModalVisible(true)}>

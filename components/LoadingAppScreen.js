@@ -14,22 +14,22 @@ export default function LoadingAppScreen() {
   const checkToken = async () => {
     try {
       const token = await AsyncStorage.getItem('userToken');
-    const response = await fetch(apiUrl, {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${token}`
-      },
-    });
-
-    if (response.ok) {
-      navigation.navigate('DrawerNavigationScreen');
-    } else {
-      navigation.navigate('Login');
+      const response = await fetch(apiUrl, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+      });
+  
+      if (response.ok) {
+        navigation.replace('DrawerNavigationScreen'); // Zastąp stos nawigacji
+      } else {
+        navigation.replace('Login'); // Zastąp stos nawigacji
+      }
+    } catch (error) {
+      navigation.replace('Login'); // Zastąp stos nawigacji
     }
-  } catch (error) {
-    navigation.navigate('Login');
-  }
-};
+  };
 
   useEffect(() => {
     Animated.spring(logoPosition, {

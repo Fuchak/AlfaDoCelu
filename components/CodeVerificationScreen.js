@@ -9,6 +9,7 @@ const CodeVerificationScreen = ({ navigation }) => {
   const route = useRoute();
   const { phoneNumber } = route.params;
   const { email } = route.params;
+  const { kodWeryfikacyjny } = route.params;
 
   const handleCodeInput = (text) => {
     setCode(text);
@@ -48,7 +49,6 @@ const CodeVerificationScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
         <Image source={require('./../assets/AlfaDoCelu.png')} style={styles.logo}/>
-      <Text style={styles.infoText}>Kod został wysłany</Text>
       <Text style={styles.instructionText}>Wprowadź kod weryfikacyjny</Text>
       <TextInput
         style={styles.input}
@@ -61,6 +61,10 @@ const CodeVerificationScreen = ({ navigation }) => {
       <TouchableOpacity style={styles.button} onPress={handleContinue} disabled={code.length === 0}>
         <Text style={styles.buttonText}>Kontynuuj</Text>
       </TouchableOpacity>
+      <Text style={styles.codeText}>
+        Twój kod weryfikacyjny: 
+        <Text style={styles.code}>{kodWeryfikacyjny}</Text>
+      </Text>
       {!!error && <Text style={styles.errorText}>{error}</Text>}
     </View>
   );
@@ -77,10 +81,6 @@ const styles = StyleSheet.create({
   instructionText: {
     fontSize: 18,
     marginBottom: 10,
-  },
-  infoText: {
-    fontSize: 16,
-    marginBottom: 20,
   },
   input: {
     height: 50,
@@ -115,6 +115,14 @@ const styles = StyleSheet.create({
   logo:{
     width: 120,
     height: 120,
+    marginBottom: 20,
+  },
+  codeText: {
+    color: 'black', 
+  },
+  code: {
+    color: 'green', 
+    fontWeight: 'bold',
   },
 });
 

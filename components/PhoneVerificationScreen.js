@@ -24,9 +24,15 @@ const PhoneVerificationScreen = ({ navigation }) => {
           },
           body: JSON.stringify({ numerTelefonu: phoneNumber }),
         });
+  
+        if (response.status === 409) {
+          setError('Użytkownik z tym numerem telefonu już istnieje.');
+          return;
+        }
+        
         const data = await response.json();
-        if (data.kodWeryfikacyjny) {
-          navigation.navigate('CodeVerification', { phoneNumber: phoneNumber });
+        if (response.status === 200 && data.kodWeryfikacyjny) {
+          navigation.navigate('CodeVerification', { phoneNumber: phoneNumber, kodWeryfikacyjny: data.kodWeryfikacyjny  });
         } else {
           setError('Nie udało się uzyskać kodu weryfikacyjnego.');
         }

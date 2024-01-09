@@ -25,9 +25,15 @@ const EmailVerificationScreen = ({ navigation }) => {
           },
           body: JSON.stringify({ email: email }),
         });
+  
+        if (response.status === 409) {
+          setError('Użytkownik z tym adresem email już istnieje.');
+          return;
+        }
+  
         const data = await response.json();
-        if (data.kodWeryfikacyjny) {
-          navigation.navigate('CodeVerification', { email: email });
+        if (response.status === 200 && data.kodWeryfikacyjny) {
+          navigation.navigate('CodeVerification', { email: email, kodWeryfikacyjny: data.kodWeryfikacyjny });
         } else {
           setError('Nie udało się uzyskać kodu weryfikacyjnego.');
         }
@@ -39,6 +45,7 @@ const EmailVerificationScreen = ({ navigation }) => {
       setError('Email jest niepoprawny.');
     }
   };
+  
 
   return (
     <View style={styles.container}>

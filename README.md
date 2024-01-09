@@ -39,7 +39,9 @@ Otwieramy jako administrator konsolę w folderze serwera:
 
 ## Uruchamianie Programu
 
-1. W folderze aplikacji otwieramy konsolę i wpisujemy polecenie: `npx expo start`.
+1. W folderze aplikacji otwieramy konsolę i wpisujemy polecenie: 
+ - `npx expo start` (jeśli mamy telefon w tej samej sieci)
+ - `npx expo start --tunnel` (jeśli mamy telefon w innej sieci)
 2. W aplikacji Expo Go na telefonie Android skanujemy kod QR.
 3. Przykładowe konto do zalogowania
 	- Login: - `518050511`

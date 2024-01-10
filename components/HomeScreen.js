@@ -13,7 +13,6 @@ const HomeScreen = ({ navigation}) => {
   const mapRef = useRef(null);
   const [region, setRegion] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
   const [isRideOrdered, setIsRideOrdered] = useState(false);
   const [SelectedDriverID, setSelectedDriverId] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
@@ -98,13 +97,25 @@ useEffect(() => {
   }, [isMagnetometerActive]);
 
   useEffect(() => {
-    (async () => {
+    const checkPermissionsAndLocation = async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
+  
       if (status !== 'granted') {
-        setErrorMsg('Odmowa dostępu do lokalizacji');
-        setIsLoading(false);
+        setErrorMsg('Proszę włączyć uprawnienia lokalizacji w ustawieniach.');
         return;
       }
+
+      const isLocationServiceEnabled = await Location.hasServicesEnabledAsync();
+      if (!isLocationServiceEnabled) {
+        setRegion({
+          latitude: 50.8660773,
+          longitude: 20.6285677,
+          latitudeDelta: 0.0922,
+          longitudeDelta: 0.0421,
+        });
+        return;
+      }
+
       try {
         let location = await Location.getCurrentPositionAsync({});
         setRegion({
@@ -114,14 +125,17 @@ useEffect(() => {
           longitudeDelta: 0.005,
         });
       } catch (error) {
-        //Wyciszamy błąd gdy nie damy uprawnień lokalizacji bo po co ma nam się wyświetlać
-        if (!error.message.includes("unsatisfied device settings")) {
-          console.error('Błąd podczas uzyskiwania lokalizacji:', error);
-        }
+        setRegion({
+          latitude: 50.8660773,
+          longitude: 20.6285677,
+          latitudeDelta: 0.0922,
+          longitudeDelta: 0.0421,
+        });
       }
-      setIsLoading(false);
-    })();
-  }, );
+
+    };
+    checkPermissionsAndLocation();
+  }, []);
 
   const goToCurrentLocation = () => {
     (async () => {
@@ -177,11 +191,9 @@ useEffect(() => {
   return (
     
       <View style={styles.container}>
-        {isLoading ? (
-          <ActivityIndicator size="large" />
-        ) : errorMsg ? (
-          <Text style={styles.error}>{errorMsg}</Text>
-        ) : (
+         {errorMsg ? (
+            <Text style={styles.error}>{errorMsg}</Text>
+          ) : (
           <MapView
             ref={mapRef}
             style={StyleSheet.absoluteFillObject}
@@ -198,14 +210,14 @@ useEffect(() => {
             
             showsCompass={false}
             onRegionChangeComplete={(newRegion) => {
-              if (newRegion.latitude.toFixed(4) !== region.latitude.toFixed(4) ||
-                  newRegion.longitude.toFixed(4) !== region.longitude.toFixed(4)) {
+              if (newRegion.latitude.toFixed(7) !== region.latitude.toFixed(7) ||
+                  newRegion.longitude.toFixed(7) !== region.longitude.toFixed(7)) {
                 setIsUserLocated(false);
                 setIsMagnetometerActive(false);
               }
             }}
           />
-        )}
+          )}
         <TouchableOpacity
           style={styles.notificationButton} 
           onPress={() => navigation.navigate('Notifications')}>

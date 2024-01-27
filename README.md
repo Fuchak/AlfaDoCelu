@@ -7,8 +7,8 @@ Projekt aplikacji do zamawiania alfy jako taxi.
 ## Wymagania
 
 - XAMPP (Aktualnie baza zdalnie na https://www.db4free.net/phpMyAdmin/ )
-- Login: - `student3`
-- Hasło: - `student3`
+- Login: - `------`
+- Hasło: - `------`
 - NODE.js (Aktualnie serwer zdalnie na https://glitch.com/edit/#!/substantial-winter-kingfisher?path=server.js%3A4%3A29 )
 - Visual Studio Code
 
@@ -33,7 +33,7 @@ Otwieramy jako administrator konsolę w folderze serwera:
 
 ### XAMPP (Jeśli lokalny)
 1. Startujemy Apache i MySQL.
-2. Tworzymy użytkownika `student3` z hasłem `student3` (serwer lokalny).
+2. Tworzymy użytkownika `------` z hasłem `------` (serwer lokalny).
 3. Tworzymy bazę danych `afladocelu`.
 4. Tworzymy tabele (z pliku `Baza_Creaty.txt`).
 

@@ -59,10 +59,6 @@ Otwieramy jako administrator konsolę w folderze serwera:
 <img src="https://github.com/Fuchak/AlfaDoCelu/assets/103064805/fdd5f6f5-2828-4044-8503-9f58aad019bf" width="200" alt="Choose Payment Method">
 <img src="https://github.com/Fuchak/AlfaDoCelu/assets/103064805/45fa98af-0a43-45b4-9019-20358b1b1d70" width="200" alt="Help">
 <img src="https://github.com/Fuchak/AlfaDoCelu/assets/103064805/5726e6a6-19c9-4448-9787-c25b19c0a68e" width="200" alt="Ride History">
-<img src="https://github.com/Fuchak/AlfaDoCelu/assets/103064805/774f08ba-9a2e-45d3-aba8-9ba832e763a3" width="200" alt="Chose Driver">
-<img src="https://github.com/Fuchak/AlfaDoCelu/assets/103064805/2fe556d7-088d-4afe-b985-6f688bcab4cf" width="200" alt="Choose Payment Method">
-<img src="https://github.com/Fuchak/AlfaDoCelu/assets/103064805/b03eefb5-0e70-4f73-b873-946514e9954a" width="200" alt="Help">
-<img src="https://github.com/Fuchak/AlfaDoCelu/assets/103064805/fad3b4b5-d504-413d-9750-0b33799abb58" width="200" alt="Ride History">
 <img src="https://github.com/Fuchak/AlfaDoCelu/assets/103064805/491d6f96-f800-4e1e-b267-56955cb1ba93" width="200" alt="Wallet">
 <img src="https://github.com/Fuchak/AlfaDoCelu/assets/103064805/a4384a31-59cf-4966-b51a-06de16009590" width="200" alt="Settings">
 <img src="https://github.com/Fuchak/AlfaDoCelu/assets/103064805/f7df7e3c-6639-4eac-87f0-42fb9218a126" width="200" alt="Profile">
